@@ -1,0 +1,20 @@
+CARA MENGHASILKAN APK DEBUG (TANPA ANDROID STUDIO DI HP)
+
+Paket ini sekarang berisi workflow GitHub Actions untuk mengompilasi APK di cloud GitHub.
+Syarat: akun GitHub dan upload project ini sebagai repository.
+
+1. Ekstrak ZIP di komputer atau HP.
+2. Buat repository baru di GitHub (mis. ai-music-video-maker).
+3. Upload SELURUH isi folder project ke repository, termasuk folder .github.
+4. Buka tab Actions di repository.
+5. Pilih workflow "Build Android APK".
+6. Tekan Run workflow.
+7. Setelah selesai, buka hasil run dan unduh artifact "AI-Music-Video-Maker-debug".
+8. Ekstrak artifact, lalu instal app-debug.apk di Android (aktifkan izin instalasi dari sumber tersebut jika diminta).
+
+CATATAN JUJUR:
+- Ini akan menghasilkan APK debug dari prototipe native yang tersedia.
+- APK saat ini hanya memiliki UI native, pemilih audio, kolom judul/lirik, dan tampilan konfigurasi.
+- Mesin transkripsi lokal, sinkronisasi karaoke, generasi AI 3D, dan render MP4 BELUM terimplementasi.
+- Jadi jangan menganggap APK pertama ini sudah bisa menghasilkan video. Ini hanya build installable untuk memvalidasi instalasi dan UI.
+- Build workflow memerlukan koneksi internet dan akun GitHub. Tidak ada server laptop yang perlu dijalankan untuk APK setelah terinstal.
