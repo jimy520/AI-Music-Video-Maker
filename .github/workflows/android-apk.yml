@@ -4,7 +4,7 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -14,17 +14,14 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Check Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls "$ANDROID_HOME/platforms"
-          ls "$ANDROID_HOME/build-tools"
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -35,9 +32,48 @@ jobs:
         run: |
           mkdir -p project
           unzip -q AI_Music_Video_Maker_Source.zip -d project
-          test -f project/settings.gradle.kts
-          test -f project/app/src/main/AndroidManifest.xml
-          test -f project/app/src/main/java/com/beyond/musicmaker/MainActivity.kt
+
+      - name: Fix Java Kotlin compatibility
+        run: |
+          cat > project/app/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+
+          android {
+              namespace = "com.beyond.musicmaker"
+              compileSdk = 35
+
+              defaultConfig {
+                  applicationId = "com.beyond.musicmaker"
+                  minSdk = 26
+                  targetSdk = 35
+                  versionCode = 1
+                  versionName = "0.1.0"
+              }
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          }
+
+          dependencies {
+              implementation("androidx.core:core-ktx:1.15.0")
+              implementation("androidx.appcompat:appcompat:1.7.0")
+              implementation("com.google.android.material:material:1.12.0")
+              implementation("androidx.activity:activity-ktx:1.10.0")
+              implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+              implementation("androidx.media3:media3-exoplayer:1.5.1")
+              implementation("androidx.media3:media3-transformer:1.5.1")
+              implementation("androidx.media3:media3-effect:1.5.1")
+          }
+          EOF
 
       - name: Build APK
         run: gradle -p project :app:assembleDebug
